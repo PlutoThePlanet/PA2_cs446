@@ -47,6 +47,10 @@ def priority_sort():
 
 def main():
     sorting = {"FCFS", "ShortestFirst", "Priority"}
+    pid_list = []
+    arrival_time_list = []
+    burst_time_list = []
+    priority_list = []
 
     if len(sys.argv) != 3:
         print("you did not enter the correct number of arguments")
@@ -55,7 +59,11 @@ def main():
         sys.argv[1] = file
         print("what sort type would you like to use?")
         sort = input()
-        sys.argv[2] = sort
+        sys.argv[2] = sort                                                              # INDEX 2 DOESN'T EXIST HERE ???
+
+    if not any(ele in sys.argv[2] for ele in sorting):                                  # did you provide a sort
+        print("your process scheduling options are FCFS, ShortestFirst, or Priority")
+        quit()
 
     if not open(sys.argv[1], 'r'):                                                      # does this file exist
         print("your file doesn't exist")
@@ -63,12 +71,11 @@ def main():
     else:                                                                               # then parse the input
         with open(sys.argv[1], 'r') as f:
             for line in f:
-                print(line)
                 pid, arrival_time, burst_time, priority = line.split()
-
-    if not any(ele in sys.argv[2] for ele in sorting):                                  # did you provide a sort
-        print("your process scheduling options are FCFS, ShortestFirst, or Priority")
-        quit()
+                pid_list += [pid]
+                arrival_time_list += [arrival_time]
+                burst_time_list += [burst_time]
+                priority_list += [priority]
 
     if sys.argv[2] == "FCFS":                                                           # call sorting and print
         first_come_first_served_sort()
@@ -84,8 +91,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# print("start test")
-# print(len(sys.argv))
-# print(str(sys.argv))
-# print("end test")
