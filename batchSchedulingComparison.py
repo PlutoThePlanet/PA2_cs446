@@ -7,7 +7,6 @@
 # and any possible tradeoffs in implementation or process execution
 
 import sys
-from DistUpgrade.DistUpgradeViewText import readline
 
 
 def avg_turnaround():
@@ -46,7 +45,7 @@ def priority_sort():
     return
 
 
-def main(argv):
+def main():
     sorting = {"FCFS", "ShortestFirst", "Priority"}
 
     if len(sys.argv) != 3:
@@ -84,7 +83,7 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()
 
 # print("start test")
 # print(len(sys.argv))
