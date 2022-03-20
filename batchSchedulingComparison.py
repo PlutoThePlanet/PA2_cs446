@@ -33,10 +33,12 @@ def avg_wait(process_turnaround_times, process_burst_times):
 
 
 def first_come_first_served_sort(data):
-    data.sort(key=lambda x: x[0])                       # sort by PID so edge case is set up
-    data.sort(key=lambda x: x[1])                       # sort by arrival time
     completion_list = []
     current_time = 0
+
+    data.sort(key=lambda x: x[0])                       # sort by PID so edge case is set up
+    data.sort(key=lambda x: x[1])                       # sort by arrival time
+
     for elem in range(0, len(data)):                    # find completion times
         completion = current_time + data[elem][2]       # completion = currentTime + burstTime
         completion_list += [completion]                 # add to list
@@ -47,9 +49,12 @@ def first_come_first_served_sort(data):
 def shortest_job_first_sort(data):
     queue = []
     pid_list = []
+    completion_list = []
+    current_time = 0
 
     data.sort(key=lambda x: x[0])               # sort by PID so edge case is set up
     data.sort(key=lambda x: x[1])               # sort by arrival time - active process should be at front
+
     for elem in range(0, len(data)):            # load all processes into queue - active process should be at front
         queue.append(data[elem])
     pid_list += [queue[0][0]]                                   # add first process
@@ -68,8 +73,9 @@ def shortest_job_first_sort(data):
                     queue.insert(0, queue[index])           # place new active process at front
                     queue.pop(index+1)                      # remove process from old location
             queue[0][2] -= 1                                # decrement remaining time of active
-    print("exe list: " + str(pid_list))
-    return [pid_list]
+
+    # calculate and return completion times
+    return [pid_list, completion_list]
 
 
 def priority_sort(data):
