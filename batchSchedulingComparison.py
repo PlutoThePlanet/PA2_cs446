@@ -10,7 +10,6 @@
 # there might be a more efficient ordering for FCFS
 
 import sys
-from collections import deque
 
 
 def avg_turnaround(process_completion_times, process_arrival_times):
@@ -46,24 +45,32 @@ def first_come_first_served_sort(data):
 
 
 def shortest_job_first_sort(data):
-    data.sort(key=lambda x: x[1])               # sort by arrival time
     queue = []
     pid_list = []
-    index = 1
-    length = len(data)
 
-    for elem in range(0, len(data)):            # load all processes
+    data.sort(key=lambda x: x[0])               # sort by PID so edge case is set up
+    data.sort(key=lambda x: x[1])               # sort by arrival time - active process should be at front
+    for elem in range(0, len(data)):            # load all processes into queue - active process should be at front
         queue.append(data[elem])
-
     pid_list += [data[0][0]]                    # list first PID
 
-    while not queue == []:                          # while there are still processes waiting to be run
-        if queue[index][2] < queue[0][2]:           # if the process coming in has a shorter time than what's at front
-            queue.insert(index, data[index+1])      # place this new process in front
-            # update the burst of the old process
-            # add new process to list
+    while not queue == []:                              # while there are still processes waiting to be run,
+        print(queue)
+        if len(queue) == 1:
+            queue.pop(0)
         else:
-            index += 1
+            for j in range(0, len(queue)-1):                # check that all processes have remaining time
+                if queue[j][2] <= 0:                        # if the active process has reached 0 time remaining
+                    queue.pop(0)                            # remove from the queue (process finished).
+            for index in range(1, len(queue)):              # iterate through the remaining waiting processes.
+                if queue[index][2] < queue[0][2]:           # if the next process has a shorter burst than the current
+                    queue[0][2] -= queue[index][1]          # decrement the burst of active process by arrival of next
+                    queue.insert(0, queue[index])           # place new active process at front
+                    queue.pop(index+1)                      # remove process from old location
+                    pid_list += [queue[0][0]]               # list new active process
+                else:
+                    queue[0][2] -= 1                        # otherwise, decrement remaining time of active
+    print(queue)
 
     # if the burst of the newest process in the queue is less than the remaining time to execute the current process,
     # the current process should be added back to the queue and the new process should be executed
