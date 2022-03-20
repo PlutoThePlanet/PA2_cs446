@@ -7,17 +7,16 @@
 # and any possible tradeoffs in implementation or process execution
 
 import sys
-from array import *
 
 
 def avg_turnaround(process_completion_times, process_arrival_times):
     turnaround_times = []
-    time_total = 0
+    total = 0
     for elem in range(0, len(process_completion_times)):
-        time = process_completion_times[elem] - process_arrival_times[elem]         # take the difference
-        turnaround_times += [time]                                                  # add val to list
-        time_total += time                                                          # add to total
-    avg_turn_time = time_total / len(turnaround_times)                              # calc average
+        turnaround_time = process_completion_times[elem] - process_arrival_times[elem]          # calc turnaround
+        turnaround_times += [turnaround_time]                                                   # add time to list
+        total += turnaround_time                                                                # add to turnTotal
+    avg_turn_time = total / len(turnaround_times)                                               # calc average
     return [turnaround_times, avg_turn_time]
 
 
@@ -30,19 +29,26 @@ def avg_wait(process_turnaround_times, process_burst_times):
     return wait_avg
 
 
-def first_come_first_served_sort():
-    # 
-    return []
+def first_come_first_served_sort(data):
+    data.sort(key=lambda x: x[0])                       # sort by PID so edge case is set up
+    data.sort(key=lambda x: x[1])                       # sort by arrival time
+    completion_list = []
+    current_time = 0
+    for elem in range(0, len(data)):                    # find completion times
+        completion = current_time + data[elem][2]       # completion = currentTime + burstTime
+        completion_list += [completion]                 # add to list
+        current_time += data[elem][2]                   # new current time
+    return [data, completion_list]
 
 
-def shortest_job_first_sort():
+def shortest_job_first_sort(data):
     #
-    return []
+    return data
 
 
-def priority_sort():
+def priority_sort(data):
     #
-    return []
+    return data
 
 
 def main():
@@ -76,33 +82,30 @@ def main():
                 pid, arrival_time, burst_time, priority = line.split(', ')
                 data_list = [int(pid), int(arrival_time), int(burst_time), int(priority)]   # 2D array of all data
                 data_2d.insert(index, data_list)
-                pid_list += [int(pid)]
-                arrival_time_list += [int(arrival_time)]
-                burst_time_list += [int(burst_time)]
-                priority_list += [int(priority)]
                 index += 1
 
-    for elem in range(0, len(pid_list)):                                                    # find completion times
-        completion = arrival_time_list[elem] + burst_time_list[elem]
-        completion_list += [completion]
-
-    if sys.argv[2] == "FCFS":                                                               # call sort fct, and print
-        fcfs_ret = first_come_first_served_sort()
+    if sys.argv[2] == "FCFS":                                                               # call sort fcts, and print
+        fcfs_ret = first_come_first_served_sort(data_2d)
+        data_2d = fcfs_ret[0]
+        completion_list = fcfs_ret[1]
+        for elem in range(0, len(data_2d)):
+            print(data_2d[elem][0])
+        for elem in range(0, 4):
+            pid_list += [int(data_2d[elem][0])]                                             # update arrays
+            arrival_time_list += [int(data_2d[elem][1])]
+            burst_time_list += [int(data_2d[elem][2])]
+            priority_list += [int(data_2d[elem][3])]
+        turnaround_ret = avg_turnaround(completion_list, arrival_time_list)                 # calculate times
+        turnaround_list = turnaround_ret[0]
+        avg_turnaround_time = turnaround_ret[1]
+        wait = avg_wait(turnaround_list, burst_time_list)
+        print("Average Process Turnaround Time: " + str(avg_turnaround_time))               # print
+        print("Average Process Wait Time: " + str(wait))
     elif sys.argv[2] == "ShortestFirst":
-        sjf_ret = shortest_job_first_sort()
+        sjf_ret = shortest_job_first_sort(data_2d)
     elif sys.argv[2] == "Priority":
-        prio_ret = priority_sort()
-
-    # For each algorithm, the output to the terminal should be the processed in the order that they should execute,
-    # the average process waiting time, and the average process turn around time, each on their own line. All input
-    # and output should be gathered and executed IN MAIN
-    # Please print to 2 decimal places
+        prio_ret = priority_sort(data_2d)
 
 
 if __name__ == "__main__":
     main()
-
-    # turnaround_ret = avg_turnaround(completion_list, arrival_time_list)
-    # turnaround_list = turnaround_ret[0]
-    # avg_turnaround_time = turnaround_ret[1]
-    # avg_wait(turnaround_list, burst_time_list)
