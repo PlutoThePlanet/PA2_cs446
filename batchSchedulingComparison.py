@@ -16,25 +16,17 @@ def avg_turnaround(process_completion_times, process_arrival_times):
         time = process_completion_times[elem] - process_arrival_times[elem]         # take the difference
         turnaround_times += [time]                                                  # add val to list
         time_total += time                                                          # add to total
-    avg_turn_time = time_total / len(turnaround_times)                              # calc avg
-    print([turnaround_times, avg_turn_time])
+    avg_turn_time = time_total / len(turnaround_times)                              # calc average
     return [turnaround_times, avg_turn_time]
 
 
 def avg_wait(process_turnaround_times, process_burst_times):
     wait_total = 0
     for elem in range(0, len(process_turnaround_times)):
-        wait_time = process_turnaround_times[elem] - process_burst_times[elem]
-        wait_total += wait_time
-        # wait_avg = wait_total /
-    # Wait time is calculated by subtracting each processBurstTime from its processTurnaroundTime
-    #   For example, using FCFS (see below) we previously calculated that process 3 has a turnaround time of 70, and
-    #   process 1 has a turnaround time of 20. To calculate the waitTime for process 3, we subtract the burst time
-    #   from the turnaround (70-50) and get 20; doing the same for process 1, we get 0
-    # To calculate the average, sum each process' wait time, and divide by the number of processes
-    #   So if we only executed process 1 and 3, we would add 20 and 0 and divide by 2
-    #   the wait time of those two processes averaged (ignoring the rest of the list for simplicity) is 10
-    return []
+        wait_time = process_turnaround_times[elem] - process_burst_times[elem]      # take the difference
+        wait_total += wait_time                                                     # add to total
+    wait_avg = wait_total / (len(process_turnaround_times))                         # calc average
+    return wait_avg
 
 
 def first_come_first_served_sort():
@@ -103,3 +95,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    # turnaround_ret = avg_turnaround(completion_list, arrival_time_list)
+    # turnaround_list = turnaround_ret[0]
+    # avg_turnaround_time = turnaround_ret[1]
+    # avg_wait(turnaround_list, burst_time_list)
