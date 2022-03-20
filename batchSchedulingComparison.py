@@ -7,6 +7,7 @@
 # and any possible tradeoffs in implementation or process execution
 
 import sys
+from array import *
 
 
 def avg_turnaround(process_completion_times, process_arrival_times):
@@ -30,7 +31,7 @@ def avg_wait(process_turnaround_times, process_burst_times):
 
 
 def first_come_first_served_sort():
-    #
+    # 
     return []
 
 
@@ -51,8 +52,9 @@ def main():
     burst_time_list = []
     priority_list = []
     completion_list = []
+    data_2d = []
 
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 3:                                                                  # check num of arguments
         print("you did not enter the correct number of arguments")
         print("what is the name of your process file?")
         file = input()
@@ -61,33 +63,37 @@ def main():
         sort = input()
         sys.argv[2] = sort                                                       # ERROR: INDEX 2 DOESN'T EXIST HERE ???
 
-    if not any(ele in sys.argv[2] for ele in sorting):                                  # did you provide a sort
+    if not any(ele in sys.argv[2] for ele in sorting):                                      # did you provide a sort
         print("your process scheduling options are FCFS, ShortestFirst, or Priority")
         quit()
-
-    if not open(sys.argv[1], 'r'):                                                      # does this file exist
+    elif not open(sys.argv[1], 'r'):                                                        # does this file exist
         print("your file doesn't exist")
         quit()
-    else:                                                                               # then parse the input
+    else:                                                                                   # then parse the input
         with open(sys.argv[1], 'r') as f:
+            index = 0
             for line in f:
                 pid, arrival_time, burst_time, priority = line.split(', ')
+                data_list = [int(pid), int(arrival_time), int(burst_time), int(priority)]   # 2D array of all data
+                data_2d.insert(index, data_list)
                 pid_list += [int(pid)]
                 arrival_time_list += [int(arrival_time)]
                 burst_time_list += [int(burst_time)]
                 priority_list += [int(priority)]
+                index += 1
 
-    for elem in range(0, len(pid_list)):                                                # find completion times
+    for elem in range(0, len(pid_list)):                                                    # find completion times
         completion = arrival_time_list[elem] + burst_time_list[elem]
         completion_list += [completion]
 
-    if sys.argv[2] == "FCFS":                                                           # call sorting and print
+    if sys.argv[2] == "FCFS":                                                               # call sort fct, and print
         fcfs_ret = first_come_first_served_sort()
     elif sys.argv[2] == "ShortestFirst":
         sjf_ret = shortest_job_first_sort()
     elif sys.argv[2] == "Priority":
         prio_ret = priority_sort()
-    # For each algorithm, the output to the terminal should be the processes in the order that they should execute,
+
+    # For each algorithm, the output to the terminal should be the processed in the order that they should execute,
     # the average process waiting time, and the average process turn around time, each on their own line. All input
     # and output should be gathered and executed IN MAIN
     # Please print to 2 decimal places
