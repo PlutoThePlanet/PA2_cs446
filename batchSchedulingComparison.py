@@ -78,7 +78,7 @@ def shortest_job_first_sort(data):                                              
             queue[0][2] -= 1                                # decrement remaining time of active
             current_time += 1                               # increment current time
 
-    print(exit_queue)
+    print("exit queue: " + str(exit_queue))
     return [pid_list, exit_queue]
 
 
@@ -155,8 +155,8 @@ def main():
             burst_time_list += [ret_exit_data[elem][2]]
             priority_list += [ret_exit_data[elem][3]]
             completion_time_list += [ret_exit_data[elem][4]]
-        print(pid_list)
-        print(completion_time_list)
+        # print(pid_list)
+        # print(completion_time_list)
         for elem in range(0, len(ret_pid_list)):                                     # print process list
             print(ret_pid_list[elem])
         turnaround_ret = avg_turnaround(completion_time_list, arrival_time_list)     # calculate times
