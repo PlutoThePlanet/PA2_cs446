@@ -83,9 +83,14 @@ def shortest_job_first_sort(data):                                              
 
 
 def priority_sort(data):
-    data.sort(key=lambda x: x[0])                       # sort by PID
-    data.sort(key=lambda x: x[3])                       # sort by priority
-    data.sort(key=lambda x: x[1])                       # sort by arrival time
+    # completion_list = []
+    # current_time = 0
+
+    data.sort(key=lambda x: x[0])                     # sort by PID
+    data.sort(key=lambda x: x[3])                     # sort by priority
+    data.sort(key=lambda x: x[1])                     # sort by arrival time
+
+    return data
 
 
 def main():
@@ -158,7 +163,6 @@ def main():
         wait = avg_wait(turnaround_list, burst_time_list)
         print("Average Process Turnaround Time: " + str(avg_turnaround_time))        # print
         print("Average Process Wait Time: " + str(wait))
-
     elif sys.argv[2] == "Priority":  # ################################################ Priority #######################
         print("placeholder")
         # prio_ret = priority_sort(data_2d)
