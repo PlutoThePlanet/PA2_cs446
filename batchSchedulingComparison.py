@@ -35,10 +35,8 @@ def avg_wait(process_turnaround_times, process_burst_times):
 def first_come_first_served_sort(data):
     completion_list = []
     current_time = 0
-
     data.sort(key=lambda x: x[0])                       # sort by PID so edge case is set up
     data.sort(key=lambda x: x[1])                       # sort by arrival time
-
     for elem in range(0, len(data)):                    # find completion times
         completion = current_time + data[elem][2]       # completion = currentTime + burstTime
         completion_list += [completion]                 # add to list
@@ -49,13 +47,13 @@ def first_come_first_served_sort(data):
 def shortest_job_first_sort(data):
     queue = []
     pid_list = []
-    exit_queue = []         # basically a sorted 'data' list, w/ completion times added to each process
+    exit_queue = []                          # basically a sorted 'data' list, w/ completion times added to each process
     current_time = 0
 
-    data.sort(key=lambda x: x[0])               # sort by PID so edge case is set up
-    data.sort(key=lambda x: x[1])               # sort by arrival time - active process should be at front
+    data.sort(key=lambda x: x[0])            # sort by PID so edge case is set up
+    data.sort(key=lambda x: x[1])            # sort by arrival time - active process should be at front
 
-    for elem in range(0, len(data)):            # load all processes into queue - active process should be at front
+    for elem in range(0, len(data)):         # load all processes into queue - active process should be at front
         queue.append(data[elem])
     pid_list += [queue[0][0]]                                   # add first process
     while not queue == []:                                      # while there are still processes waiting to be run,
@@ -69,7 +67,6 @@ def shortest_job_first_sort(data):
                 if queue[j][2] <= 0:                        # if a process has reached 0 time remaining
                     pid_list += [queue[0][0]]               # list process when removed
                     queue[0].append(current_time)           # track exit time
-                    print(queue[0])
                     exit_queue.append(queue[0])             # add entire process to exit queue (to be returned)
                     queue.pop(0)                            # remove from the queue (process finished).
             for index in range(1, len(queue)):              # iterate through the remaining waiting processes.
@@ -82,7 +79,6 @@ def shortest_job_first_sort(data):
             current_time += 1                               # increment current time
 
     print(exit_queue)
-    # calculate and return completion times
     return [pid_list, exit_queue]
 
 
@@ -90,13 +86,6 @@ def priority_sort(data):
     data.sort(key=lambda x: x[0])                       # sort by PID
     data.sort(key=lambda x: x[3])                       # sort by priority
     data.sort(key=lambda x: x[1])                       # sort by arrival time
-    # completion_list = []
-    # current_time = 0
-    # for elem in range(0, len(data)):  # find completion times
-    #     completion = current_time + data[elem][2]  # completion = currentTime + burstTime
-    #     completion_list += [completion]  # add to list
-    #     current_time += data[elem][2]  # new current time
-    # return [data, completion_list]
 
 
 def main():
@@ -105,7 +94,7 @@ def main():
     arrival_time_list = []
     burst_time_list = []
     priority_list = []
-    completion_list = []
+    completion_time_list = []
     data_2d = []
 
     if len(sys.argv) != 3:                                                                  # check num of arguments
@@ -132,7 +121,7 @@ def main():
                 data_2d.insert(index, data_list)
                 index += 1
 
-    if sys.argv[2] == "FCFS":                                                               # FCFS
+    if sys.argv[2] == "FCFS":  # ###################################################### FCFS ###########################
         fcfs_ret = first_come_first_served_sort(data_2d)
         data_2d = fcfs_ret[0]
         completion_list = fcfs_ret[1]
@@ -149,10 +138,26 @@ def main():
         wait = avg_wait(turnaround_list, burst_time_list)
         print("Average Process Turnaround Time: " + str(avg_turnaround_time))               # print
         print("Average Process Wait Time: " + str(wait))
-    elif sys.argv[2] == "ShortestFirst":
+    elif sys.argv[2] == "ShortestFirst":  # ########################################### ShortestFirst ##################
         sjf_ret = shortest_job_first_sort(data_2d)
-    elif sys.argv[2] == "Priority":
-        prio_ret = priority_sort(data_2d)
+        ret_pid_list = sjf_ret[0]
+        ret_exit_data = sjf_ret[1]
+        for elem in range(0, len(ret_exit_data)):                       # update individual data lists
+            pid_list += [ret_exit_data[elem][0]]
+            arrival_time_list += [ret_exit_data[elem][1]]
+            burst_time_list += [ret_exit_data[elem][2]]
+            priority_list += [ret_exit_data[elem][3]]
+            completion_time_list += [ret_exit_data[elem][4]]
+        print(pid_list)
+        print(completion_time_list)
+        for elem in range(0, len(ret_pid_list)):                        # print process list
+            print(ret_pid_list[elem])
+
+        # calculate and print times
+
+    elif sys.argv[2] == "Priority":  # ################################################ Priority #######################
+        print("placeholder")
+        # prio_ret = priority_sort(data_2d)
 
 
 if __name__ == "__main__":
