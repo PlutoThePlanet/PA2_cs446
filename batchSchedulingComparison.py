@@ -49,7 +49,7 @@ def first_come_first_served_sort(data):
 def shortest_job_first_sort(data):
     queue = []
     pid_list = []
-    completion_list = []
+    exit_queue = []         # basically a sorted 'data' list, w/ completion times added to each process
     current_time = 0
 
     data.sort(key=lambda x: x[0])               # sort by PID so edge case is set up
@@ -58,24 +58,32 @@ def shortest_job_first_sort(data):
     for elem in range(0, len(data)):            # load all processes into queue - active process should be at front
         queue.append(data[elem])
     pid_list += [queue[0][0]]                                   # add first process
-    while not queue == []:                                  # while there are still processes waiting to be run,
+    while not queue == []:                                      # while there are still processes waiting to be run,
         if len(queue) == 1:
             pid_list += [queue[0][0]]                           # list final process
+            queue[0].append(current_time)                       # track exit time of final process
+            exit_queue.append(queue[0])                         # add final process to exit queue (to be returned)
             queue.pop(0)
         else:
             for j in range(0, len(queue)-1):                # check that all processes have remaining time
                 if queue[j][2] <= 0:                        # if a process has reached 0 time remaining
-                    pid_list += [queue[0][0]]                   # list process when removed
+                    pid_list += [queue[0][0]]               # list process when removed
+                    queue[0].append(current_time)           # track exit time
+                    print(queue[0])
+                    exit_queue.append(queue[0])             # add entire process to exit queue (to be returned)
                     queue.pop(0)                            # remove from the queue (process finished).
             for index in range(1, len(queue)):              # iterate through the remaining waiting processes.
                 if queue[index][2] < queue[0][2]:           # if the next process has a shorter burst than the current
                     queue[0][2] -= queue[index][1]          # decrement the burst of active process by arrival of next
+                    current_time += queue[index][1]         # update cur. time by arrival of next (that time had passed)
                     queue.insert(0, queue[index])           # place new active process at front
                     queue.pop(index+1)                      # remove process from old location
             queue[0][2] -= 1                                # decrement remaining time of active
+            current_time += 1                               # increment current time
 
+    print(exit_queue)
     # calculate and return completion times
-    return [pid_list, completion_list]
+    return [pid_list, exit_queue]
 
 
 def priority_sort(data):
