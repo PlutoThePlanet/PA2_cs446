@@ -44,7 +44,7 @@ def first_come_first_served_sort(data):
     return [data, completion_list]
 
 
-def shortest_job_first_sort(data):
+def shortest_job_first_sort(data):                                                                                      # fix completion times
     queue = []
     pid_list = []
     exit_queue = []                          # basically a sorted 'data' list, w/ completion times added to each process
@@ -55,12 +55,12 @@ def shortest_job_first_sort(data):
 
     for elem in range(0, len(data)):         # load all processes into queue - active process should be at front
         queue.append(data[elem])
-    pid_list += [queue[0][0]]                                   # add first process
-    while not queue == []:                                      # while there are still processes waiting to be run,
+    pid_list += [queue[0][0]]                               # add first process
+    while not queue == []:                                  # while there are still processes waiting to be run,
         if len(queue) == 1:
-            pid_list += [queue[0][0]]                           # list final process
-            queue[0].append(current_time)                       # track exit time of final process
-            exit_queue.append(queue[0])                         # add final process to exit queue (to be returned)
+            pid_list += [queue[0][0]]                       # list final process
+            queue[0].append(current_time)                   # track exit time of final process
+            exit_queue.append(queue[0])                     # add final process to exit queue (to be returned)
             queue.pop(0)
         else:
             for j in range(0, len(queue)-1):                # check that all processes have remaining time
@@ -104,7 +104,7 @@ def main():
         sys.argv[1] = file
         print("what sort type would you like to use?")
         sort = input()
-        sys.argv[2] = sort                                                       # ERROR: INDEX 2 DOESN'T EXIST HERE ???
+        sys.argv[2] = sort                                                                                              # ERROR: INDEX 2 DOESN'T EXIST HERE ???
 
     if not any(ele in sys.argv[2] for ele in sorting):                                      # did you provide a sort
         print("your process scheduling options are FCFS, ShortestFirst, or Priority")
@@ -142,7 +142,7 @@ def main():
         sjf_ret = shortest_job_first_sort(data_2d)
         ret_pid_list = sjf_ret[0]
         ret_exit_data = sjf_ret[1]
-        for elem in range(0, len(ret_exit_data)):                       # update individual data lists
+        for elem in range(0, len(ret_exit_data)):                                    # update individual data lists
             pid_list += [ret_exit_data[elem][0]]
             arrival_time_list += [ret_exit_data[elem][1]]
             burst_time_list += [ret_exit_data[elem][2]]
@@ -150,10 +150,14 @@ def main():
             completion_time_list += [ret_exit_data[elem][4]]
         print(pid_list)
         print(completion_time_list)
-        for elem in range(0, len(ret_pid_list)):                        # print process list
+        for elem in range(0, len(ret_pid_list)):                                     # print process list
             print(ret_pid_list[elem])
-
-        # calculate and print times
+        turnaround_ret = avg_turnaround(completion_time_list, arrival_time_list)     # calculate times
+        turnaround_list = turnaround_ret[0]
+        avg_turnaround_time = turnaround_ret[1]
+        wait = avg_wait(turnaround_list, burst_time_list)
+        print("Average Process Turnaround Time: " + str(avg_turnaround_time))        # print
+        print("Average Process Wait Time: " + str(wait))
 
     elif sys.argv[2] == "Priority":  # ################################################ Priority #######################
         print("placeholder")
