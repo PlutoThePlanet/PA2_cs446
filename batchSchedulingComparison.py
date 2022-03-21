@@ -82,15 +82,17 @@ def shortest_job_first_sort(data):                                              
     return [pid_list, exit_queue]
 
 
-def priority_sort(data):
-    # completion_list = []
-    # current_time = 0
-
+def priority_sort(data):                                                                                                # ask about how different (code currently works for given ex)
+    completion_list = []
+    current_time = 0
     data.sort(key=lambda x: x[0])                     # sort by PID
-    data.sort(key=lambda x: x[3])                     # sort by priority
     data.sort(key=lambda x: x[1])                     # sort by arrival time
-
-    return data
+    data.sort(key=lambda x: x[3])                     # sort by priority
+    for elem in range(0, len(data)):                  # find completion times
+        completion = current_time + data[elem][2]     # completion = currentTime + burstTime
+        completion_list += [completion]               # add to list
+        current_time += data[elem][2]                 # new current time
+    return [data, completion_list]
 
 
 def main():
@@ -164,8 +166,22 @@ def main():
         print("Average Process Turnaround Time: " + str(avg_turnaround_time))        # print
         print("Average Process Wait Time: " + str(wait))
     elif sys.argv[2] == "Priority":  # ################################################ Priority #######################
-        print("placeholder")
-        # prio_ret = priority_sort(data_2d)
+        prio_ret = priority_sort(data_2d)
+        data_2d = prio_ret[0]                                                                                           # duplicate code from FCFS
+        completion_list = prio_ret[1]
+        for elem in range(0, len(data_2d)):
+            print(data_2d[elem][0])
+        for elem in range(0, 4):
+            pid_list += [int(data_2d[elem][0])]  # update arrays - sorted
+            arrival_time_list += [int(data_2d[elem][1])]
+            burst_time_list += [int(data_2d[elem][2])]
+            priority_list += [int(data_2d[elem][3])]
+        turnaround_ret = avg_turnaround(completion_list, arrival_time_list)  # calculate times
+        turnaround_list = turnaround_ret[0]
+        avg_turnaround_time = turnaround_ret[1]
+        wait = avg_wait(turnaround_list, burst_time_list)
+        print("Average Process Turnaround Time: " + str(avg_turnaround_time))  # print
+        print("Average Process Wait Time: " + str(wait))
 
 
 if __name__ == "__main__":
