@@ -10,6 +10,7 @@
 # there might be a more efficient ordering for FCFS
 
 import sys
+import copy
 
 
 def avg_turnaround(process_completion_times, process_arrival_times):
@@ -45,16 +46,14 @@ def first_come_first_served_sort(data):
 
 
 def shortest_job_first_sort(data):
-    queue = []
     pid_list = []
     exit_queue = []                         # basically a sorted 'data' list, w/ completion times added to each process
     current_time = 0
     data.sort(key=lambda x: x[0])           # sort by PID so edge case is set up
     data.sort(key=lambda x: x[1])           # sort by arrival time - active process should be at front
+    queue = copy.deepcopy(data)             # deep copy so original data is maintained
+    pid_list += [queue[0][0]]               # add first process to PID list
 
-    for elem in range(0, len(data)):        # load all processes into queue - active process should be at front
-        queue.append(data[elem])
-    pid_list += [queue[0][0]]                               # add first process
     while not queue == []:                                  # while there are still processes waiting to be run,
         if len(queue) == 1:
             pid_list += [queue[0][0]]                       # list final process
@@ -79,8 +78,10 @@ def shortest_job_first_sort(data):
             queue[0][2] -= 1                                # decrement remaining time of active
             current_time += 1                               # increment current time
 
-    # fix burst times
-    print("exit queue: " + str(exit_queue))
+    for i in range(0, len(exit_queue)):           # for every process in exit_queue
+        for j in range(0, len(data)):             # look through original 'data'
+            if exit_queue[i][0] == data[j][0]:    # and find the process w/ matching PID
+                exit_queue[i][2] = data[j][2]     # then restore the old burst time of the process
     return [pid_list, exit_queue]
 
 
@@ -110,6 +111,7 @@ def calculate_times(data_2d, pid_list, arrival_time_list, burst_time_list, prior
     return [avg_turnaround_time, wait]
 
 
+# noinspection DuplicatedCode
 def main():
     sorting = {"FCFS", "ShortestFirst", "Priority"}
     pid_list = []
@@ -136,7 +138,9 @@ def main():
     if not any(ele in arg_list for ele in sorting):                                         # did you provide a sort
         print("your process scheduling options are FCFS, ShortestFirst, or Priority")
         quit()
-    elif not open(sys.argv[1], 'r'):                                                        # does this file exist
+    try:                                                                                    # does the file exist
+        open(arg_list[1], 'r')
+    except OSError:
         print("your file doesn't exist")
         quit()
     else:                                                                                   # then parse the input
@@ -170,6 +174,7 @@ def main():
             burst_time_list += [ret_exit_data[elem][2]]
             priority_list += [ret_exit_data[elem][3]]
             completion_time_list += [ret_exit_data[elem][4]]
+        print("PID ORDER OF EXECUTION")
         for elem in range(0, len(ret_pid_list)):                                     # print process list
             print(ret_pid_list[elem])
         turnaround_ret = avg_turnaround(completion_time_list, arrival_time_list)     # calculate times
@@ -182,6 +187,9 @@ def main():
         prio_ret = priority_sort(data_2d)
         data_2d = prio_ret[0]
         completion_list = prio_ret[1]
+        print("PID ORDER OF EXECUTION")
+        for elem in range(0, len(data_2d)):
+            print(data_2d[elem][0])
         time_ret = calculate_times(data_2d, pid_list, arrival_time_list, burst_time_list, priority_list, completion_list)
         avg_turnaround_time = time_ret[0]
         wait = time_ret[1]
