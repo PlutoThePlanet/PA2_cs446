@@ -44,21 +44,23 @@ def first_come_first_served_sort(data):
     return [data, completion_list]
 
 
-def shortest_job_first_sort(data):                                                                                      # fix completion times
+def shortest_job_first_sort(data):
     queue = []
     pid_list = []
-    exit_queue = []                          # basically a sorted 'data' list, w/ completion times added to each process
+    exit_queue = []                         # basically a sorted 'data' list, w/ completion times added to each process
     current_time = 0
+    data.sort(key=lambda x: x[0])           # sort by PID so edge case is set up
+    data.sort(key=lambda x: x[1])           # sort by arrival time - active process should be at front
 
-    data.sort(key=lambda x: x[0])            # sort by PID so edge case is set up
-    data.sort(key=lambda x: x[1])            # sort by arrival time - active process should be at front
+    print(data)
 
-    for elem in range(0, len(data)):         # load all processes into queue - active process should be at front
+    for elem in range(0, len(data)):        # load all processes into queue - active process should be at front
         queue.append(data[elem])
     pid_list += [queue[0][0]]                               # add first process
     while not queue == []:                                  # while there are still processes waiting to be run,
         if len(queue) == 1:
             pid_list += [queue[0][0]]                       # list final process
+            current_time += queue[0][2]                     # update the final burst time
             queue[0].append(current_time)                   # track exit time of final process
             exit_queue.append(queue[0])                     # add final process to exit queue (to be returned)
             queue.pop(0)
@@ -71,18 +73,23 @@ def shortest_job_first_sort(data):                                              
                     queue.pop(0)                            # remove from the queue (process finished).
             for index in range(1, len(queue)):              # iterate through the remaining waiting processes.
                 if queue[index][2] < queue[0][2]:           # if the next process has a shorter burst than the current
-                    queue[0][2] -= queue[index][1]          # decrement the burst of active process by arrival of next
-                    current_time += queue[index][1]         # update cur. time by arrival of next (that time had passed)
+                    print("swap: " + str(queue))
+                    if current_time == 0:
+                        queue[0][2] -= queue[index][1]      # decrement the burst of active process by arrival of next
+                        current_time += queue[index][1]     # update cur. time by arrival of next (that time had passed)
                     queue.insert(0, queue[index])           # place new active process at front
+
+                    print(queue)
+
                     queue.pop(index+1)                      # remove process from old location
             queue[0][2] -= 1                                # decrement remaining time of active
             current_time += 1                               # increment current time
-
+    # fix burst times
     print("exit queue: " + str(exit_queue))
     return [pid_list, exit_queue]
 
 
-def priority_sort(data):                                                                                                # ask about how different (code currently works for given ex)
+def priority_sort(data):
     completion_list = []
     current_time = 0
     data.sort(key=lambda x: x[0])                     # sort by PID
@@ -111,7 +118,7 @@ def main():
         sys.argv[1] = file
         print("what sort type would you like to use?")
         sort = input()
-        sys.argv[2] = sort                                                                                              # ERROR: INDEX 2 DOESN'T EXIST HERE ???
+        sys.argv[2] = sort                                                                                              # ERROR: INDEX 2 DOESN'T EXIST HERE ??? # create another list of args to plug into
 
     if not any(ele in sys.argv[2] for ele in sorting):                                      # did you provide a sort
         print("your process scheduling options are FCFS, ShortestFirst, or Priority")
@@ -167,7 +174,7 @@ def main():
         print("Average Process Wait Time: " + str(wait))
     elif sys.argv[2] == "Priority":  # ################################################ Priority #######################
         prio_ret = priority_sort(data_2d)
-        data_2d = prio_ret[0]                                                                                           # duplicate code from FCFS
+        data_2d = prio_ret[0]                                                                                           # duplicate code from FCFS, can modularize
         completion_list = prio_ret[1]
         for elem in range(0, len(data_2d)):
             print(data_2d[elem][0])
