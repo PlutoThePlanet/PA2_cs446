@@ -2,12 +2,20 @@
 # Paige Mortensen
 # CS 446 PA2 - compare, contrast, and simulate process management algorithms
 
-# As part of your file header, compare and contrast the three algorithms.
-# Be sure to explain where each would be appropriate to use,
-# and any possible tradeoffs in implementation or process execution
+# FCFS is an extremely straightforward algorithm and therefore easy to implement. The downsides of this algorithm is
+# that if longer processes are first "in line", this may cause a long wait time. This long wait may also lead to fewer
+# processes being able to run and, if our system crashes in this time, we may lose all the shorter processes that didn't
+# get a chance to run.
+# Shortest Job First is a more complicated program, but helps ensure that all short program are run as soon as possible,
+# and as quickly as possible. Downsides may occur, however, if a longer process gets put off for too long (all other
+# processes are shorter and therefore always run first). Similar to the FCFS algorithm, if our system crashes before our
+# longer processes are run, we may lose these longer processes, or they may simply end up never being run.
+# Using the Priority algorithm ensures that our most important processes are always run first; for example, we always
+# want our system to boot before we allow the user to begin making requests. But, if we define a long or many long
+# processes as having higher priority, we may have shorter processes stuck waiting for a long time. If they are
+# important short processes we can define them as such, but this may be inconvenient for the user as it is possible for
+# not as many processes to be completed in the same amount of time a longer process may take.
 
-# shortest job has a greater likelihood of encountering more interrupts
-# there might be a more efficient ordering for FCFS
 
 import sys
 import copy
@@ -111,7 +119,6 @@ def calculate_times(data_2d, pid_list, arrival_time_list, burst_time_list, prior
     return [avg_turnaround_time, wait]
 
 
-# noinspection DuplicatedCode
 def main():
     sorting = {"FCFS", "ShortestFirst", "Priority"}
     pid_list = []
